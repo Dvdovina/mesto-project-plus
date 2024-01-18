@@ -30,7 +30,7 @@
     "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
     "express-winston": "^4.2.0",
-    "mongoose": "^6.5.0",
+    "mongoose": "^6.12.5",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^4.7.1"
   }
