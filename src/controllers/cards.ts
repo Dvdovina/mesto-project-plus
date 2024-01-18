@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { OK_STATUS, ERROR_STATUS } from "../constants";
 
 
-const createCard = (req: Request, res: Response) => {
+export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
   Card.create({ name, link, owner:(req as any).user._id })
     .then((card) => {

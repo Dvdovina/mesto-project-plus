@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { OK_STATUS, ERROR_STATUS } from "../constants";
 
 
-const createUser = (req: Request, res: Response) => {
+export const createUser = (req: Request, res: Response) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => {
