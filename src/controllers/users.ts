@@ -6,7 +6,7 @@ import { OK_STATUS, ERROR_STATUS } from "../constants";
 
 export const createUser = (req: Request, res: Response) => {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  return User.create({ name, about, avatar })
     .then((user) => {
       res.status(OK_STATUS).send(({ data: user }));
     })
