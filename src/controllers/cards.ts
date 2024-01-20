@@ -5,7 +5,7 @@ import { OK_STATUS, ERROR_STATUS } from "../constants";
 
 export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
-  return Card.create({ name, link, owner:(req as any).user._id })
+  Card.create({ name, link, owner: (req as any).user._id })
     .then((card) => {
       res.status(OK_STATUS).send({ data: card });
     })
