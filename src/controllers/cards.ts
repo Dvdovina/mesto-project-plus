@@ -1,13 +1,16 @@
-import Card from "../models/card";
-import { Request, Response } from "express";
-import { OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR } from "../constants";
-import { Error } from "mongoose";
-
+import { Request, Response } from 'express';
+import { Error } from 'mongoose';
+import Card from '../models/card';
+import {
+  OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
+} from '../constants';
 
 export const getCards = (req: Request, res: Response) => {
   Card.find({})
-    .then((cards) => res.status(OK_STATUS).send({ data: cards }))
-    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
+    .then((cards) =>
+      res.status(OK_STATUS).send({ data: cards }))
+    .catch(() =>
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
 };
 
 export const createCard = (req: Request, res: Response) => {
@@ -32,20 +35,22 @@ export const deleteCardById = (req: Request, res: Response) => {
       }
       res.status(OK_STATUS).send({ message: 'Карточка удалена' });
     })
-    .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
+    .catch(() =>
+      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
 };
 
 export const likeCard = (req: Request, res: Response) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
-      $addToSet: { likes: (req as any).user._id },
+      $addToSet: { likes: (req as any).user._id }
     },
     {
-      new: true,
-    },
+      new: true
+    }
   )
-    .then((card) => res.status(OK_STATUS).send(({ data: card })))
+    .then((card) =>
+      res.status(OK_STATUS).send(({ data: card })))
     .catch((err) => {
       if (err instanceof Error.ValidationError) {
         return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
@@ -58,13 +63,14 @@ export const unlikeCard = (req: Request, res: Response) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     {
-      $pull: { likes: (req as any).user._id },
+      $pull: { likes: (req as any).user._id }
     },
     {
-      new: true,
-    },
+      new: true
+    }
   )
-    .then((card) => res.status(OK_STATUS).send({ data: card }))
+    .then((card) =>
+      res.status(OK_STATUS).send({ data: card }))
     .catch((err) => {
       if (err instanceof Error.ValidationError) {
         return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
@@ -72,4 +78,3 @@ export const unlikeCard = (req: Request, res: Response) => {
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
     });
 };
-

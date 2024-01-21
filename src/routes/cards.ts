@@ -1,5 +1,7 @@
-import { Router } from "express";
-import { createCard, getCards, deleteCardById, unlikeCard, likeCard } from "../controllers/cards";
+import { Router } from 'express';
+import {
+  createCard, getCards, deleteCardById, unlikeCard, likeCard
+} from '../controllers/cards';
 
 const cardRouter = Router();
 
@@ -9,7 +11,4 @@ cardRouter.delete('/cards/:cardId', deleteCardById);
 cardRouter.put('/cards/:cardId/likes', likeCard);
 cardRouter.delete('/cards/:cardId/likes', unlikeCard);
 
-
-export default cardRouter
-
-
+export default cardRouter;

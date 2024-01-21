@@ -1,5 +1,4 @@
-
-import mongoose, { Schema } from "mongoose"
+import mongoose, { Schema } from 'mongoose';
 
 interface IUser {
   name: string;
@@ -12,19 +11,18 @@ const userSchema = new Schema<IUser>({
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true,
+    required: true
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 200,
-    required: true,
+    required: true
   },
   avatar: {
     type: String,
-    required: true,
-  },
-})
-
+    required: true
+  }
+});
 
 export default mongoose.model<IUser>('user', userSchema);

@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
-import { celebrate, Joi } from 'celebrate';
+// import { celebrate, Joi } from 'celebrate';
 import userRouter from './routes/users';
 import cardRouter from './routes/cards';
 
@@ -21,13 +21,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(userRouter);
 app.use(cardRouter);
 
-
-const connect = async() => {
+const connect = async () => {
   mongoose.set('strictQuery', true);
-  await mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
-  console.log("Подключились к базе данных")
-  await app.listen(PORT)
-  console.log("Сервер запущен на порту:", 3000)
-}
+  await mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+  console.log('Подключились к базе данных'); // eslint-disable-line
+  await app.listen(PORT);
+  console.log('Сервер запущен на порту:', 3000); // eslint-disable-line
+};
 
 connect();
