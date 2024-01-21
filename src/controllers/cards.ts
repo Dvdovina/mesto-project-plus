@@ -10,8 +10,8 @@ export const getCards = (req: Request, res: Response) => {
 };
 
 export const createCard = (req: Request, res: Response) => {
-  const { name, link, _id } = req.body;
-  Card.create({ name, link, owner: _id })
+  const { name, link } = req.body;
+  Card.create({ name, link, owner: (req as any).user._id })
     .then((card) => {
       res.status(OK_STATUS).send({ data: card });
     })
@@ -26,6 +26,34 @@ export const deleteCardById = (req: Request, res: Response) => {
       }
       res.status(OK_STATUS).send({ message: 'Карточка удалена' });
     })
+    .catch(() => res.status(BAD_REQUEST_STATUS).send({ message: 'Сервер не смог обработать запрос' }));
+};
+
+export const likeCard = (req: Request, res: Response) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    {
+      $addToSet: { likes: (req as any).user._id },
+    },
+    {
+      new: true,
+    },
+  )
+    .then((card) => res.status(OK_STATUS).send(({ data: card })))
+    .catch(() => res.status(BAD_REQUEST_STATUS).send({ message: 'Сервер не смог обработать запрос' }));
+};
+
+export const unlikeCard = (req: Request, res: Response) => {
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    {
+      $pull: { likes: (req as any).user._id },
+    },
+    {
+      new: true,
+    },
+  )
+    .then((card) => res.status(OK_STATUS).send({ data: card }))
     .catch(() => res.status(BAD_REQUEST_STATUS).send({ message: 'Сервер не смог обработать запрос' }));
 };
 
