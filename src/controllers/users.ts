@@ -33,6 +33,38 @@ export const createUser = (req: Request, res: Response) => {
     .catch(() => res.status(BAD_REQUEST_STATUS).send({ message: 'Сервер не смог обработать запрос' }));
 };
 
+export const updateUser = (req: Request, res: Response) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate((req as any).user._id, { name, about }, {
+    new: true,
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
+      }
+      res.status(OK_STATUS).send({ data: user });
+    })
+    .catch(() => res.status(BAD_REQUEST_STATUS).send({ message: 'Сервер не смог обработать запрос' }));
+};
+
+export const updateUserAvatar = (req: Request, res: Response) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate((req as any).user._id, { avatar }, {
+    new: true,
+  })
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
+      }
+      res.status(OK_STATUS).send({ data: user });
+    })
+    .catch(() => res.status(BAD_REQUEST_STATUS).send({ message: 'Сервер не смог обработать запрос' }));
+};
+
+
+
+
+
 
 
 
