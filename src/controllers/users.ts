@@ -12,7 +12,7 @@ export const getUsers = (req: Request, res: Response) => {
 };
 
 export const getUserById = (req: Request, res: Response) => {
-  User.findById(req.params.id)
+  User.findById(req.params.userId)
     .then((user) => {
       if (user) {
         res.status(OK_STATUS).send({
@@ -21,8 +21,9 @@ export const getUserById = (req: Request, res: Response) => {
           avatar: user.avatar,
           _id: user._id,
         });
+      } else {
+        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
       }
-      return res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
     })
     .catch(() => res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
 };
@@ -39,24 +40,20 @@ export const createUser = (req: Request, res: Response) => {
     });
 };
 
-export const updateUser = (req: Request, res: Response) => {
+export const updateUser = async (req: Request, res: Response) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate((req as any).user._id, { name, about }, {
-    new: true,
-  })
-    .then((user) => {
-      if (!user) {
-        return res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
-      }
+  try {
+    const user = await User.findByIdAndUpdate((req as any).user?._id, { name, about }, { new: true });
+    if (!user) {
+      res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
+    } else {
       res.status(OK_STATUS).send({ data: user });
-    })
-    .catch((err) => {
-      if (err instanceof Error.ValidationError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
+    }
+  } catch (error) {
+    res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+  }
 };
+
 
 export const updateUserAvatar = (req: Request, res: Response) => {
   const { avatar } = req.body;

@@ -9,9 +9,8 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 app.use((req: Request, res: Response, next: NextFunction) => {
-  req.body = {
-    ...req.body,
-    _id: "65ad3fe7dcc0838fe296b657",
+  (req as any).user = {
+    _id: '65ad512105d06641627718dc'
   };
   next();
 });
