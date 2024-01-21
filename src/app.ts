@@ -1,12 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 import { celebrate, Joi } from 'celebrate';
-import userRouter from 'routes/users';
-import cardRouter from 'routes/cards';
+import userRouter from './routes/users';
+import cardRouter from './routes/cards';
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb')
 
 const { PORT = 3000 } = process.env;
 

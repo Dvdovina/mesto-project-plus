@@ -1,4 +1,4 @@
-import User from "models/user";
+import User from "../models/user";
 import { Request, Response } from "express";
 import bcrypt from 'bcrypt';
 import { OK_STATUS, ERROR_STATUS } from "../constants";
