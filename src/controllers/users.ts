@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 // import bcrypt from 'bcrypt';
 import { Error } from 'mongoose';
 import {
@@ -6,13 +6,14 @@ import {
 } from '../utils/constants';
 import User from '../models/user';
 
-export const getUsers = (req: Request, res: Response) => {
-  User.find({})
-    .then((users) =>
-      res.status(OK_STATUS).send({ data: users }))
-    .catch(() =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
-};
+export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const users = await User.find({}).orFail(new Error('Пользователи не найдены'))
+    return res.status(OK_STATUS).send(users)
+  } catch (err) {
+    return next(err);
+  };
+}
 
 export const getUserById = (req: Request, res: Response) => {
   User.findById(req.params.userId)

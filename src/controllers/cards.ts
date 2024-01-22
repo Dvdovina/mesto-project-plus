@@ -1,17 +1,18 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { Error } from 'mongoose';
 import Card from '../models/card';
 import {
   OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
 } from '../utils/constants';
 
-export const getCards = (req: Request, res: Response) => {
-  Card.find({})
-    .then((cards) =>
-      res.status(OK_STATUS).send({ data: cards }))
-    .catch(() =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
-};
+export const getCards = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const cards = await Card.find({}).orFail(() => new Error('Карточки не найдены'))
+    return res.status(OK_STATUS).send(cards)
+  } catch (err) {
+    return next(err);
+  };
+}
 
 export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
