@@ -35,8 +35,12 @@ export const deleteCardById = (req: Request, res: Response) => {
       }
       res.status(OK_STATUS).send({ message: 'Карточка удалена' });
     })
-    .catch(() =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
+    .catch((err) => {
+      if (err instanceof Error.CastError) {
+        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+    });
 };
 
 export const likeCard = (req: Request, res: Response) => {
@@ -52,7 +56,7 @@ export const likeCard = (req: Request, res: Response) => {
     .then((card) =>
       res.status(OK_STATUS).send(({ data: card })))
     .catch((err) => {
-      if (err instanceof Error.ValidationError) {
+      if (err instanceof Error.CastError) {
         return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
@@ -72,7 +76,7 @@ export const unlikeCard = (req: Request, res: Response) => {
     .then((card) =>
       res.status(OK_STATUS).send({ data: card }))
     .catch((err) => {
-      if (err instanceof Error.ValidationError) {
+      if (err instanceof Error.CastError) {
         return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });

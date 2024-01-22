@@ -28,8 +28,12 @@ export const getUserById = (req: Request, res: Response) => {
         res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
       }
     })
-    .catch(() =>
-      res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' }));
+    .catch((err) => {
+      if (err instanceof Error.CastError) {
+        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
+    });
 };
 
 export const createUser = (req: Request, res: Response) => {
