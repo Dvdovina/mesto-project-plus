@@ -1,8 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 // import { celebrate, Joi } from 'celebrate';
-import userRouter from './routes/users';
-import cardRouter from './routes/cards';
+import router from './routes/index';
 
 const app = express();
 
@@ -18,8 +17,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(userRouter);
-app.use(cardRouter);
+app.use(router);
 
 const connect = async () => {
   mongoose.set('strictQuery', true);
