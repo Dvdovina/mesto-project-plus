@@ -1,10 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { BAD_REQUEST_STATUS, INTERNAL_SERVER_ERROR, OK_STATUS, NOT_FOUND_STATUS } from '../utils/constants';
-import User from '../models/user';
 import { Error } from 'mongoose';
+import {
+  BAD_REQUEST_STATUS, INTERNAL_SERVER_ERROR, OK_STATUS, NOT_FOUND_STATUS
+} from '../utils/constants';
+import User from '../models/user';
 
-export const handleErrors = (controllerFunction: (req: Request, res: Response) => Promise<void>) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+export const handleErrors = (controllerFunction: (req: Request, res: Response) =>
+Promise<void>) =>
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       await controllerFunction(req, res);
     } catch (error) {
@@ -13,8 +16,8 @@ export const handleErrors = (controllerFunction: (req: Request, res: Response) =
       }
       return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
     }
+    return undefined;
   };
-};
 
 export const updateUserLogic = async (req: Request, res: Response) => {
   const { name, about } = req.body;
@@ -23,7 +26,7 @@ export const updateUserLogic = async (req: Request, res: Response) => {
     { name, about },
     {
       new: true,
-      runValidators: true,
+      runValidators: true
     }
   );
   if (!user) {
@@ -37,7 +40,7 @@ export const updateUserAvatarLogic = async (req: Request, res: Response) => {
   const { avatar } = req.body;
   const user = await User.findByIdAndUpdate((req as any).user._id, { avatar }, {
     new: true,
-    runValidators: true,
+    runValidators: true
   });
   if (!user) {
     res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });

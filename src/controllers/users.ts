@@ -9,12 +9,12 @@ import { handleErrors, updateUserAvatarLogic, updateUserLogic } from '../decorat
 
 export const getUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const users = await User.find({}).orFail(new Error('Пользователи не найдены'))
-    return res.status(OK_STATUS).send(users)
+    const users = await User.find({}).orFail(new Error('Пользователи не найдены'));
+    return res.status(OK_STATUS).send(users);
   } catch (err) {
     return next(err);
-  };
-}
+  }
+};
 
 export const getUserById = (req: Request, res: Response) => {
   User.findById(req.params.userId)

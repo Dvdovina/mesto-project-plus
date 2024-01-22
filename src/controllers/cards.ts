@@ -7,12 +7,13 @@ import {
 
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cards = await Card.find({}).orFail(() => new Error('Карточки не найдены'))
-    return res.status(OK_STATUS).send(cards)
+    const cards = await Card.find({}).orFail(() =>
+      new Error('Карточки не найдены'));
+    return res.status(OK_STATUS).send(cards);
   } catch (err) {
     return next(err);
-  };
-}
+  }
+};
 
 export const createCard = (req: Request, res: Response) => {
   const { name, link } = req.body;
