@@ -3,7 +3,7 @@ import { Error } from 'mongoose';
 import Card from '../models/card';
 import {
   OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
-} from '../constants';
+} from '../utils/constants';
 
 export const getCards = (req: Request, res: Response) => {
   Card.find({})

@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { Error } from 'mongoose';
 import {
   OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
-} from '../constants';
+} from '../utils/constants';
 import User from '../models/user';
 
 export const getUsers = (req: Request, res: Response) => {
