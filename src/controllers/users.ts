@@ -18,6 +18,15 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+export const getUserMe = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await User.findById((req as any).user?._id).orFail(new Error('Пользователь не найден'))
+    return res.status(OK_STATUS).send({ user });
+  } catch (err) {
+    return next(err);
+  }
+};
+
 export const getUserById = (req: Request, res: Response) => {
   User.findById(req.params.userId)
     .then((user) => {
