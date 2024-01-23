@@ -1,6 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 import { isEmail, isURL } from 'validator';
+import bcrypt from 'bcrypt';
 import { DEFAULT_USER_NAME, DEFAULT_USER_AVATAR, DEFAULT_USER_ABOUT } from '../utils/constants'
+
 
 interface IUser {
   name: string;
@@ -8,6 +10,13 @@ interface IUser {
   avatar: string;
   email: string;
   password: string;
+}
+
+interface UserModel extends mongoose.Model<IUser> {
+  findUserByCredentials: (
+    email: string,
+    password: string
+  ) => Promise<mongoose.Document<unknown, any, IUser>>;
 }
 
 const userSchema = new Schema<IUser>({
@@ -47,4 +56,21 @@ const userSchema = new Schema<IUser>({
   },
 });
 
-export default mongoose.model<IUser>('user', userSchema);
+
+
+userSchema.static(
+  'findUserByCredentials',
+  async function findUserByCredentials(email: string, password: string) {
+    const user: IUser | null = await this.findOne({ email }).select('+password');
+    if (!user) {
+      return Promise.reject(new Error('Неверная почта или пароль'))
+    }
+    const matched = await bcrypt.compare(password, user.password);
+    if (!matched) {
+      return Promise.reject(new Error('Неверная почта или пароль'))
+    }
+    return user;
+  }
+);
+
+export default mongoose.model<IUser, UserModel>('user', userSchema);

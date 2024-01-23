@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { Error } from 'mongoose';
 import {
-  OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
+  OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR, SECRET_KEY
 } from '../utils/constants';
+import { UnauthorizedError } from 'utils/errors';
 import User from '../models/user';
 import { handleErrors, updateUserAvatarLogic, updateUserLogic } from '../decorators/updateUserDataDecorator';
 
@@ -55,3 +57,15 @@ export const createUser = async (req: Request, res: Response) => {
 export const updateUser = handleErrors(updateUserLogic);
 
 export const updateUserAvatar = handleErrors(updateUserAvatarLogic);
+
+export const login = (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, SECRET_KEY as string, { expiresIn: '7d' });
+      res.send({ token });
+    })
+    .catch(() => {
+      next((new UnauthorizedError('Неверный логин или пароль')));
+    });
+};
