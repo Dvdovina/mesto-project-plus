@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
-import validator, {isEmail, isURL} from 'validator';
+import { isEmail, isURL } from 'validator';
+import { DEFAULT_USER_NAME, DEFAULT_USER_AVATAR, DEFAULT_USER_ABOUT } from '../utils/constants'
 
 interface IUser {
   name: string;
@@ -14,17 +15,17 @@ const userSchema = new Schema<IUser>({
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true
+    default: DEFAULT_USER_NAME
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 200,
-    required: true
+    default: DEFAULT_USER_ABOUT
   },
   avatar: {
     type: String,
-    required: true,
+    default: DEFAULT_USER_AVATAR,
     validate: {
       validator: (url: string) => isURL(url),
       message: 'Неправильная ссылка'
