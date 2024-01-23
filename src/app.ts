@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
 // import { celebrate, Joi } from 'celebrate';
 import router from './routes/index';
+import { login, createUser } from './controllers/users';
 
 const app = express();
 
@@ -16,6 +17,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.post('/signin', login);
+app.post('/signup', createUser);
 
 app.use(router);
 
