@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { Error } from 'mongoose';
 import {
   OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
@@ -38,9 +38,10 @@ export const getUserById = (req: Request, res: Response) => {
     });
 };
 
-export const createUser = (req: Request, res: Response) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+export const createUser = async (req: Request, res: Response) => {
+  const { name, about, avatar, email, password } = req.body;
+  const hash = await bcrypt.hash(password, 10);
+  User.create({ name, about, avatar, email, password: hash })
     .then((user) =>
       res.status(OK_STATUS).send({ data: user }))
     .catch((err) => {
