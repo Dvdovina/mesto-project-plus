@@ -4,6 +4,7 @@ import Card from '../models/card';
 import {
   OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
 } from '../utils/constants';
+import { handleCardErrors, handleCardLike } from '../decorators/updateCardDataDecorator';
 
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -45,42 +46,10 @@ export const deleteCardById = (req: Request, res: Response) => {
     });
 };
 
-export const likeCard = (req: Request, res: Response) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    {
-      $addToSet: { likes: (req as any).user._id }
-    },
-    {
-      new: true
-    }
-  )
-    .then((card) =>
-      res.status(OK_STATUS).send(({ data: card })))
-    .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
-};
+export const likeCard = handleCardErrors(async (req: Request, res: Response) => {
+  await handleCardLike(req, res, { $addToSet: { likes: (req as any).user._id } });
+});
 
-export const unlikeCard = (req: Request, res: Response) => {
-  Card.findByIdAndUpdate(
-    req.params.cardId,
-    {
-      $pull: { likes: (req as any).user._id }
-    },
-    {
-      new: true
-    }
-  )
-    .then((card) =>
-      res.status(OK_STATUS).send({ data: card }))
-    .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
-};
+export const unlikeCard = handleCardErrors(async (req: Request, res: Response) => {
+  await handleCardLike(req, res, { $pull: { likes: (req as any).user._id } });
+});
