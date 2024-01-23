@@ -2,6 +2,7 @@ export const OK_STATUS = 200;
 export const BAD_REQUEST_STATUS = 400;
 export const NOT_FOUND_STATUS = 404;
 export const INTERNAL_SERVER_ERROR = 500;
+export const UNAUTHORIZED_ERROR_STATUS = 401;
 
 export const DEFAULT_USER_NAME = 'Жак-Ив Кусто';
 export const DEFAULT_USER_ABOUT = 'Исследователь';
