@@ -6,6 +6,7 @@ import { login, createUser } from './controllers/users';
 import { auth } from './middlewares/auth'
 import { requestLogger, errorLogger } from './middlewares/logger';
 import { errorHandler } from './middlewares/errorHandler';
+import { validateCreateUser, validateLogin } from './utils/validation';
 
 const app = express();
 
@@ -16,8 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(requestLogger);
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateLogin, login);
+app.post('/signup', validateCreateUser, createUser);
 
 app.use(auth);
 
