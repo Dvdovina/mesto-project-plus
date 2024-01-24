@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { Error } from 'mongoose';
 import Card from '../models/card';
 import {
   OK_STATUS

@@ -1,11 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { Error } from 'mongoose';
 import Card from '../models/card';
 import {
-  OK_STATUS, BAD_REQUEST_STATUS, INTERNAL_SERVER_ERROR
+  OK_STATUS, BAD_REQUEST_STATUS
 } from '../utils/constants';
 import BadRequestError from '../errors/badRequestError';
-import NotFoundError from '../errors/NotFoundError';
 
 export const handleCardErrors = (
   controllerFunction: (req: Request, res: Response) => Promise<void>

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Error } from 'mongoose';
 import {
-  BAD_REQUEST_STATUS, INTERNAL_SERVER_ERROR, OK_STATUS, NOT_FOUND_STATUS
+  OK_STATUS
 } from '../utils/constants';
 import User from '../models/user';
 import BadRequestError from '../errors/badRequestError';

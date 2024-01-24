@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Error } from 'mongoose';
 import {
-  OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR, SECRET_KEY
+  OK_STATUS, SECRET_KEY
 } from '../utils/constants';
 import UnauthorizedError from '../errors/UnauthorizedError';
 import BadRequestError from '../errors/badRequestError';
