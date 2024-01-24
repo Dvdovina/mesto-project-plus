@@ -6,6 +6,7 @@ import {
 import { handleCardErrors, handleCardLike } from '../decorators/updateCardDataDecorator';
 import BadRequestError from '../errors/badRequestError';
 import NotFoundError from '../errors/NotFoundError';
+import ForbiddenError from '../errors/ForbiddenError';
 
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -31,18 +32,26 @@ export const createCard = async (req: Request, res: Response, next: NextFunction
 
 export const deleteCardById = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const card = await Card.findById(req.params.cardId);
+    if (!card) {
+      throw new NotFoundError('Карточка не найдена');
+    }
+    if (card.owner.toString() !== (req as any).user?._id) {
+      throw new ForbiddenError('Попытка удалить чужую карточку');
+    }
     const result = await Card.deleteOne({ _id: req.params.cardId });
     if (result.deletedCount === 0) {
       throw new NotFoundError('Карточка не найдена');
     }
     res.status(OK_STATUS).send({ message: 'Карточка удалена' });
   } catch (error) {
-    if (error instanceof BadRequestError || error instanceof NotFoundError) {
+    if (error instanceof NotFoundError || error instanceof ForbiddenError) {
       return next(error);
     }
     next(error);
   }
 };
+
 export const likeCard = handleCardErrors(async (req: Request, res: Response) => {
   await handleCardLike(req, res, { $addToSet: { likes: (req as any).user._id } });
 });
