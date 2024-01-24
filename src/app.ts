@@ -9,13 +9,6 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-  (req as any).user = {
-    _id: '65ad512105d06641627718dc'
-  };
-  next();
-});
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
