@@ -1,4 +1,5 @@
 import mongoose, { ObjectId, Schema } from 'mongoose';
+import { isValidUrl } from '../utils/validation';
 
 interface ICard {
   name: string;
@@ -17,7 +18,12 @@ const cardSchema = new Schema<ICard>({
   },
   link: {
     type: String,
-    required: true
+    required: true,
+    validate: {
+      validator: (url: string) =>
+        isValidUrl(url),
+      message: 'Неправильная ссылка'
+    }
   },
   owner: {
     type: Schema.Types.ObjectId,
