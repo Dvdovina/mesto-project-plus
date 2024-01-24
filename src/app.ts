@@ -1,10 +1,11 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import mongoose from 'mongoose';
-// import { celebrate, Joi } from 'celebrate';
+import { errors } from 'celebrate'
 import router from './routes/index';
 import { login, createUser } from './controllers/users';
-import {auth} from './middlewares/auth'
+import { auth } from './middlewares/auth'
 import { requestLogger, errorLogger } from './middlewares/logger';
+import { errorHandler } from './middlewares/errorHandler';
 
 const app = express();
 
@@ -23,6 +24,10 @@ app.use(auth);
 app.use(router);
 
 app.use(errorLogger);
+
+app.use(errors());
+
+app.use(errorHandler)
 
 const connect = async () => {
   mongoose.set('strictQuery', true);
