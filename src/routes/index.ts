@@ -3,7 +3,7 @@ import {
 } from 'express';
 import userRouter from './users';
 import cardRouter from './cards';
-import NotFoundError from '../utils/errors';
+import NotFoundError from '../errors/notFoundError';
 
 const router = Router();
 

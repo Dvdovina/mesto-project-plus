@@ -2,50 +2,48 @@ import { NextFunction, Request, Response } from 'express';
 import { Error } from 'mongoose';
 import Card from '../models/card';
 import {
-  OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR
+  OK_STATUS
 } from '../utils/constants';
 import { handleCardErrors, handleCardLike } from '../decorators/updateCardDataDecorator';
+import BadRequestError from '../errors/badRequestError';
+import NotFoundError from '../errors/NotFoundError';
 
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cards = await Card.find({}).orFail(() =>
-      new Error('Карточки не найдены'));
-    return res.status(OK_STATUS).send(cards);
-  } catch (err) {
-    return next(err);
+    const cards = await Card.find({}).orFail(() => new NotFoundError('Карточки не найдены'));
+    res.status(OK_STATUS).send(cards);
+  } catch (error) {
+    next(error);
   }
 };
 
-export const createCard = (req: Request, res: Response) => {
-  const { name, link } = req.body;
-  Card.create({ name, link, owner: (req as any).user._id })
-    .then((card) => {
-      res.status(OK_STATUS).send({ data: card });
-    })
-    .catch((err) => {
-      if (err instanceof Error.ValidationError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
+export const createCard = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, link } = req.body;
+    const card = await Card.create({ name, link, owner: (req as any).user._id });
+    res.status(OK_STATUS).send({ data: card });
+  } catch (error) {
+    if (error instanceof BadRequestError) {
+      return next(error);
+    }
+    next(error);
+  }
 };
 
-export const deleteCardById = (req: Request, res: Response) => {
-  Card.deleteOne({ _id: req.params.cardId })
-    .then((card) => {
-      if (card.deletedCount === 0) {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Карточка не найдена' });
-      }
-      res.status(OK_STATUS).send({ message: 'Карточка удалена' });
-    })
-    .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
+export const deleteCardById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await Card.deleteOne({ _id: req.params.cardId });
+    if (result.deletedCount === 0) {
+      throw new NotFoundError('Карточка не найдена');
+    }
+    res.status(OK_STATUS).send({ message: 'Карточка удалена' });
+  } catch (error) {
+    if (error instanceof BadRequestError || error instanceof NotFoundError) {
+      return next(error);
+    }
+    next(error);
+  }
 };
-
 export const likeCard = handleCardErrors(async (req: Request, res: Response) => {
   await handleCardLike(req, res, { $addToSet: { likes: (req as any).user._id } });
 });

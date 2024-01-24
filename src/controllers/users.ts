@@ -5,7 +5,9 @@ import { Error } from 'mongoose';
 import {
   OK_STATUS, BAD_REQUEST_STATUS, NOT_FOUND_STATUS, INTERNAL_SERVER_ERROR, SECRET_KEY
 } from '../utils/constants';
-import { UnauthorizedError } from 'utils/errors';
+import UnauthorizedError from '../errors/UnauthorizedError';
+import BadRequestError from '../errors/badRequestError';
+import ConflictError from '../errors/ConfictError';
 import User from '../models/user';
 import { handleErrors, updateUserAvatarLogic, updateUserLogic } from '../decorators/updateUserDataDecorator';
 
@@ -27,54 +29,53 @@ export const getUserMe = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export const getUserById = (req: Request, res: Response) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      if (user) {
-        res.status(OK_STATUS).send({
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          _id: user._id
-        });
-      } else {
-        res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
-      }
-    })
-    .catch((err) => {
-      if (err instanceof Error.CastError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    if (user) {
+      res.status(OK_STATUS).send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        _id: user._id
+      });
+    }
+  } catch (err: any) {
+    if (err.code === 11000) {
+      next(new ConflictError('Пользователь с таким email уже существует'));
+    } else if (err instanceof Error.CastError) {
+      next(new BadRequestError('Переданы некорректные данные'));
+    } else {
+      next(err);
+    }
+  }
 };
 
-export const createUser = async (req: Request, res: Response) => {
-  const { name, about, avatar, email, password } = req.body;
-  const hash = await bcrypt.hash(password, 10);
-  User.create({ name, about, avatar, email, password: hash })
-    .then((user) =>
-      res.status(OK_STATUS).send({ data: user }))
-    .catch((err) => {
-      if (err instanceof Error.ValidationError) {
-        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({ message: 'Внутренняя ошибка сервера' });
-    });
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { name, about, avatar, email, password } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, about, avatar, email, password: hash });
+    res.status(OK_STATUS).send({ data: user });
+  } catch (err) {
+    if (err instanceof Error.ValidationError) {
+      return next(new BadRequestError('Переданы некорректные данные'));
+    }
+    return next(err);
+  }
+};
+
+export const login = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findUserByCredentials(email, password);
+    const token = jwt.sign({ _id: user._id }, SECRET_KEY as string, { expiresIn: '7d' });
+    res.send({ token });
+  } catch (err) {
+    next(new UnauthorizedError('Неверный логин или пароль'));
+  }
 };
 
 export const updateUser = handleErrors(updateUserLogic);
 
 export const updateUserAvatar = handleErrors(updateUserAvatarLogic);
-
-export const login = (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, SECRET_KEY as string, { expiresIn: '7d' });
-      res.send({ token });
-    })
-    .catch(() => {
-      next((new UnauthorizedError('Неверный логин или пароль')));
-    });
-};
