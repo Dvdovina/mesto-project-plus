@@ -8,5 +8,3 @@ export default class ForbiddenError extends Error {
     this.statusCode = FORBIDDEN_ERROR_STATUS;
   }
 }
-
-

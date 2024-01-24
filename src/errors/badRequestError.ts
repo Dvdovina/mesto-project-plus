@@ -8,4 +8,3 @@ export default class BadRequestError extends Error {
     this.statusCode = BAD_REQUEST_STATUS;
   }
 }
-

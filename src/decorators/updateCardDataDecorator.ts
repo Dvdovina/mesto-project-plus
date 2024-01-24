@@ -7,16 +7,17 @@ import BadRequestError from '../errors/badRequestError';
 
 export const handleCardErrors = (
   controllerFunction: (req: Request, res: Response) => Promise<void>
-) => async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    await controllerFunction(req, res);
-  } catch (error) {
-    if (error instanceof BadRequestError) {
-      return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
+) =>
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await controllerFunction(req, res);
+    } catch (error) {
+      if (error instanceof BadRequestError) {
+        return res.status(BAD_REQUEST_STATUS).send({ message: 'Переданы некорректные данные' });
+      }
+      next(error);
     }
-    next(error);
-  }
-};
+  };
 
 export const handleCardLike = async (req: Request, res: Response, updateObject: any): Promise<void> => {
   const card = await Card.findByIdAndUpdate(

@@ -1,4 +1,4 @@
-import { CONFLICT_ERROR_STATUS } from "../utils/constants";
+import { CONFLICT_ERROR_STATUS } from '../utils/constants';
 
 export default class ConflictError extends Error {
   statusCode: number;

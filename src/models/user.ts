@@ -1,9 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 import { isEmail, isURL } from 'validator';
 import bcrypt from 'bcrypt';
-import { DEFAULT_USER_NAME, DEFAULT_USER_AVATAR, DEFAULT_USER_ABOUT } from '../utils/constants'
+import { DEFAULT_USER_NAME, DEFAULT_USER_AVATAR, DEFAULT_USER_ABOUT } from '../utils/constants';
 import { isValidUrl } from '../utils/validation';
-
 
 interface IUser {
   name: string;
@@ -37,9 +36,10 @@ const userSchema = new Schema<IUser>({
     type: String,
     default: DEFAULT_USER_AVATAR,
     validate: {
-      validator: (url: string) => isValidUrl(url),
+      validator: (url: string) =>
+        isValidUrl(url),
       message: 'Неправильная ссылка'
-    },
+    }
   },
   email: {
     type: String,
@@ -47,15 +47,16 @@ const userSchema = new Schema<IUser>({
     unique: true,
     trim: true,
     validate: {
-      validator: (email: string) => isEmail(email),
+      validator: (email: string) =>
+        isEmail(email),
       message: 'Неправильный e-mail'
-    },
+    }
   },
   password: {
     type: String,
     required: true,
     select: false
-  },
+  }
 });
 
 userSchema.static(
@@ -63,11 +64,11 @@ userSchema.static(
   async function findUserByCredentials(email: string, password: string) {
     const user: IUser | null = await this.findOne({ email }).select('+password');
     if (!user) {
-      return Promise.reject(new Error('Неверная почта или пароль'))
+      return Promise.reject(new Error('Неверная почта или пароль'));
     }
     const matched = await bcrypt.compare(password, user.password);
     if (!matched) {
-      return Promise.reject(new Error('Неверная почта или пароль'))
+      return Promise.reject(new Error('Неверная почта или пароль'));
     }
     return user;
   }

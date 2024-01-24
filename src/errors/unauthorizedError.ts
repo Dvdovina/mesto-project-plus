@@ -1,4 +1,4 @@
-import { UNAUTHORIZED_ERROR_STATUS } from "../utils/constants";
+import { UNAUTHORIZED_ERROR_STATUS } from '../utils/constants';
 
 export default class UnauthorizedError extends Error {
   statusCode: number;

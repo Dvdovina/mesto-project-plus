@@ -5,9 +5,9 @@ import { Error } from 'mongoose';
 import {
   OK_STATUS, SECRET_KEY
 } from '../utils/constants';
-import UnauthorizedError from '../errors/UnauthorizedError';
+import UnauthorizedError from '../errors/unauthorizedError';
 import BadRequestError from '../errors/badRequestError';
-import ConflictError from '../errors/ConfictError';
+import ConflictError from '../errors/confictError';
 import User from '../models/user';
 import { handleErrors, updateUserAvatarLogic, updateUserLogic } from '../decorators/updateUserDataDecorator';
 
@@ -22,7 +22,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
 
 export const getUserMe = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const user = await User.findById((req as any).user?._id).orFail(new Error('Пользователь не найден'))
+    const user = await User.findById((req as any).user?._id).orFail(new Error('Пользователь не найден'));
     return res.status(OK_STATUS).send({ user });
   } catch (err) {
     return next(err);
@@ -51,11 +51,16 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction):
+ Promise<void> => {  // eslint-disable-line
   try {
-    const { name, about, avatar, email, password } = req.body;
+    const {
+      name, about, avatar, email, password
+    } = req.body;
     const hash = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, about, avatar, email, password: hash });
+    const user = await User.create({
+      name, about, avatar, email, password: hash
+    });
     res.status(OK_STATUS).send({ data: user });
   } catch (err) {
     if (err instanceof Error.ValidationError) {

@@ -10,7 +10,8 @@ import ForbiddenError from '../errors/ForbiddenError';
 
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const cards = await Card.find({}).orFail(() => new NotFoundError('Карточки не найдены'));
+    const cards = await Card.find({}).orFail(() =>
+      new NotFoundError('Карточки не найдены'));
     res.status(OK_STATUS).send(cards);
   } catch (error) {
     next(error);
