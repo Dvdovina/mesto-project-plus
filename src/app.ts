@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 // import { celebrate, Joi } from 'celebrate';
 import router from './routes/index';
 import { login, createUser } from './controllers/users';
+import {auth} from './middlewares/auth'
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post('/signin', login);
 app.post('/signup', createUser);
+
+app.use(auth);
 
 app.use(router);
 

@@ -6,7 +6,7 @@ interface SessionRequest extends Request {
   user?: string | JwtPayload;
 }
 
-const auth = (req: SessionRequest, res: Response, next: NextFunction) => {
+export const auth = (req: SessionRequest, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
   const token = authorization!.replace('Bearer ', '');
   let payload;
