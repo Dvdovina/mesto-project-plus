@@ -17,9 +17,10 @@ export const handleCardErrors = (
       }
       next(error);
     }
+    return undefined;
   };
 
-export const handleCardLike = async (req: Request, res: Response, updateObject: any): Promise<void> => {
+export const handleCardLike = async (req: Request, res: Response, updateObject: any) => {
   const card = await Card.findByIdAndUpdate(
     req.params.cardId,
     updateObject,

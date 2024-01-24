@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { SECRET_KEY, UNAUTHORIZED_ERROR_STATUS } from 'utils/constants';
+import { SECRET_KEY, UNAUTHORIZED_ERROR_STATUS } from '../utils/constants';
 
 interface SessionRequest extends Request {
   user?: string | JwtPayload;

@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { isEmail, isURL } from 'validator';
+import { isEmail } from 'validator';
 import bcrypt from 'bcrypt';
 import { DEFAULT_USER_NAME, DEFAULT_USER_AVATAR, DEFAULT_USER_ABOUT } from '../utils/constants';
 import { isValidUrl } from '../utils/validation';

@@ -15,6 +15,7 @@ export const handleErrors = (
     } catch (err) {
       return next(err);
     }
+    return undefined;
   };
 
 export const updateUserLogic = async (req: Request, res: Response, next: NextFunction) => {
@@ -37,6 +38,7 @@ export const updateUserLogic = async (req: Request, res: Response, next: NextFun
     }
     return next(err);
   }
+  return undefined;
 };
 
 export const updateUserAvatarLogic = async (req: Request, res: Response, next: NextFunction) => {
@@ -59,4 +61,5 @@ export const updateUserAvatarLogic = async (req: Request, res: Response, next: N
     }
     return next(err);
   }
+  return undefined;
 };

@@ -51,8 +51,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
-export const createUser = async (req: Request, res: Response, next: NextFunction):
- Promise<void> => {  // eslint-disable-line
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
       name, about, avatar, email, password
@@ -68,6 +67,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     }
     return next(err);
   }
+  return undefined;
 };
 
 export const login = async (req: Request, res: Response, next: NextFunction) => {

@@ -5,8 +5,8 @@ import {
 } from '../utils/constants';
 import { handleCardErrors, handleCardLike } from '../decorators/updateCardDataDecorator';
 import BadRequestError from '../errors/badRequestError';
-import NotFoundError from '../errors/NotFoundError';
-import ForbiddenError from '../errors/ForbiddenError';
+import NotFoundError from '../errors/notFoundError';
+import ForbiddenError from '../errors/forbiddenError';
 
 export const getCards = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -29,6 +29,7 @@ export const createCard = async (req: Request, res: Response, next: NextFunction
     }
     next(error);
   }
+  return undefined;
 };
 
 export const deleteCardById = async (req: Request, res: Response, next: NextFunction) => {
@@ -51,6 +52,7 @@ export const deleteCardById = async (req: Request, res: Response, next: NextFunc
     }
     next(error);
   }
+  return undefined;
 };
 
 export const likeCard = handleCardErrors(async (req: Request, res: Response) => {
