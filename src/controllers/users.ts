@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { Error } from 'mongoose';
 import {
   CREATED_STATUS,
-  OK_STATUS, SECRET_KEY
+  OK_STATUS, SECRET_KEY, NOT_FOUND_STATUS
 } from '../utils/constants';
 import UnauthorizedError from '../errors/unauthorizedError';
 import BadRequestError from '../errors/badRequestError';
@@ -40,11 +40,11 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
         avatar: user.avatar,
         _id: user._id
       });
+    } else {
+      res.status(NOT_FOUND_STATUS).send({ message: 'Пользователь не найден' });
     }
-  } catch (err: any) {
-    if (err.code === 11000) {
-      next(new ConflictError('Пользователь с таким email уже существует'));
-    } else if (err instanceof Error.CastError) {
+  } catch (err) {
+    if (err instanceof Error.CastError) {
       next(new BadRequestError('Переданы некорректные данные'));
     } else {
       next(err);
@@ -61,11 +61,13 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const user = await User.create({
       name, about, avatar, email, password: hash
     });
-    const userNoPassword = { ...user.toJSON(), password: undefined };
-    res.status(CREATED_STATUS).send({ data: userNoPassword });
-  } catch (err) {
+    const userWithoutPassword = { ...user.toJSON(), password: undefined };
+    res.status(CREATED_STATUS).send({ data: userWithoutPassword });
+  } catch (err: any) {
     if (err instanceof Error.ValidationError) {
       return next(new BadRequestError('Переданы некорректные данные'));
+    } else if (err.code === 11000) {
+      return next(new ConflictError('Пользователь с таким email уже существует'));
     }
     return next(err);
   }
