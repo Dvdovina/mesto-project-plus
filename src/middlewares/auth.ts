@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { SECRET_KEY, UNAUTHORIZED_ERROR_STATUS } from '../utils/constants';
+import { SECRET_KEY } from '../utils/constants';
 import UnauthorizedError from '../errors/unauthorizedError';
 
 interface SessionRequest extends Request {
@@ -23,4 +23,4 @@ export const auth = (req: SessionRequest, res: Response, next: NextFunction) => 
   return next();
 };
 
-
+export default auth;
