@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { errors } from 'celebrate';
+import helmet from 'helmet';
 import router from './routes/index';
 import { login, createUser } from './controllers/users';
 import { auth } from './middlewares/auth';
@@ -10,9 +11,12 @@ import { validateCreateUser, validateLogin } from './utils/validation';
 
 const app = express();
 
+app.use(helmet());
+
 const { PORT = 3000 } = process.env;
 
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(requestLogger);
