@@ -1,4 +1,5 @@
 export const OK_STATUS = 200;
+export const CREATED_STATUS = 201;
 export const BAD_REQUEST_STATUS = 400;
 export const UNAUTHORIZED_ERROR_STATUS = 401;
 export const FORBIDDEN_ERROR_STATUS = 403;

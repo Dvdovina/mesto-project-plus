@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Error } from 'mongoose';
 import {
+  CREATED_STATUS,
   OK_STATUS, SECRET_KEY
 } from '../utils/constants';
 import UnauthorizedError from '../errors/unauthorizedError';
@@ -60,7 +61,8 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
     const user = await User.create({
       name, about, avatar, email, password: hash
     });
-    res.status(OK_STATUS).send({ data: user });
+    const userNoPassword = { ...user.toJSON(), password: undefined };
+    res.status(CREATED_STATUS).send({ data: userNoPassword });
   } catch (err) {
     if (err instanceof Error.ValidationError) {
       return next(new BadRequestError('Переданы некорректные данные'));
@@ -84,3 +86,5 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const updateUser = handleErrors(updateUserLogic);
 
 export const updateUserAvatar = handleErrors(updateUserAvatarLogic);
+
+

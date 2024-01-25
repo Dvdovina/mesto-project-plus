@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import Card from '../models/card';
 import {
-  OK_STATUS
+  OK_STATUS, CREATED_STATUS
 } from '../utils/constants';
 import { handleCardErrors, handleCardLike } from '../decorators/updateCardDataDecorator';
 import BadRequestError from '../errors/badRequestError';
@@ -22,7 +22,7 @@ export const createCard = async (req: Request, res: Response, next: NextFunction
   try {
     const { name, link } = req.body;
     const card = await Card.create({ name, link, owner: (req as any).user._id });
-    res.status(OK_STATUS).send({ data: card });
+    res.status(CREATED_STATUS).send({ data: card });
   } catch (error) {
     if (error instanceof BadRequestError) {
       return next(error);
