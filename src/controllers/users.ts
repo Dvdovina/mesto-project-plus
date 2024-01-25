@@ -66,7 +66,7 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
   } catch (err: any) {
     if (err instanceof Error.ValidationError) {
       return next(new BadRequestError('Переданы некорректные данные'));
-    } else if (err.code === 11000) {
+    } if (err.code === 11000) {
       return next(new ConflictError('Пользователь с таким email уже существует'));
     }
     return next(err);
@@ -88,5 +88,3 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 export const updateUser = handleErrors(updateUserLogic);
 
 export const updateUserAvatar = handleErrors(updateUserAvatarLogic);
-
-
